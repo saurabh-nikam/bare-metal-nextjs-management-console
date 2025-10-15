@@ -36,3 +36,29 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 # bare-metal-nextjs-management-console
 bare-metal-nextjs-management-console
+
+# Auth scaffolding notes (client-side)
+
+- Set `NEXT_PUBLIC_API_BASE_URL` in `.env.local`, e.g.
+
+```
+NEXT_PUBLIC_API_BASE_URL=http://192.168.1.161:30880/gr-bmc
+```
+
+- Login endpoint:
+  - `POST /login` with payload `{ username, password }`.
+  - Response should return a JWT token (supported keys: `token`, `jwt`, `access_token`, `data.token`, or raw string).
+
+- Auth storage:
+  - Token is stored in `localStorage` key `auth_token`.
+  - `AuthProvider` exposes `useAuth()` with `{ token, isAuthenticated, login, logout }`.
+
+- Protected routes:
+  - Example client-gated page: `/dashboard` redirects to `/login?next=/dashboard` if unauthenticated.
+
+- Pages:
+  - `/login` client form posts directly to backend and saves token on success.
+  - `/signup` optional; remove if not needed.
+
+- Notes:
+  - No server actions, no cookies, no middleware. Pure client-side auth for compatibility with external Go backend.
